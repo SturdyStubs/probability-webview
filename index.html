@@ -18,10 +18,6 @@
           <input type="checkbox" id="highlightDiffsToggle" checked />
           <span>Highlight Differences</span>
         </label>
-        <label class="toggle">
-          <input type="checkbox" id="viewAggregatedToggle" checked />
-          <span>Aggregated View</span>
-        </label>
       </div>
     </header>
 
@@ -33,6 +29,13 @@
           <div class="dz-instructions">Drop files here (Set A)</div>
           <input type="file" id="fileInputA" multiple accept=".json" />
         </div>
+        <div class="uploader-actions">
+          <button id="vanillaBtnSingle" class="btn" type="button">Use Vanilla Tables</button>
+        </div>
+        <div class="filelist-wrap">
+          <h3 class="filelist-title">Files (Set A)</h3>
+          <ul id="filesListA" class="filelist"></ul>
+        </div>
       </section>
 
       <section class="uploader two" id="uploaderCompare" hidden>
@@ -42,6 +45,13 @@
             <div class="dz-instructions">Drop files here (Set A)</div>
             <input type="file" id="fileInputA_compare" multiple accept=".json" />
           </div>
+          <div class="uploader-actions">
+            <button id="vanillaBtnA" class="btn" type="button">Use Vanilla Tables (A)</button>
+          </div>
+          <div class="filelist-wrap">
+            <h3 class="filelist-title">Files (Set A)</h3>
+            <ul id="filesListA_compare" class="filelist"></ul>
+          </div>
         </div>
         <div class="uploader-col">
           <h2>Upload Set B</h2>
@@ -49,23 +59,25 @@
             <div class="dz-instructions">Drop files here (Set B)</div>
             <input type="file" id="fileInputB_compare" multiple accept=".json" />
           </div>
+          <div class="uploader-actions">
+            <button id="vanillaBtnB" class="btn" type="button">Use Vanilla Tables (B)</button>
+          </div>
+          <div class="filelist-wrap">
+            <h3 class="filelist-title">Files (Set B)</h3>
+            <ul id="filesListB_compare" class="filelist"></ul>
+          </div>
         </div>
       </section>
 
-      <section class="names-panel">
-        <div class="names-status">
-          <div><strong>Loaded names:</strong> <span id="namesLoaded">0</span> items, <span id="containersLoaded">0</span> containers</div>
-          <div><strong>Unknown names queued:</strong> <span id="unknownItems">0</span> items, <span id="unknownContainers">0</span> containers</div>
-        </div>
-        <div class="names-actions">
-          <label class="btn" for="namesFileInput">Load names.json</label>
-          <input type="file" id="namesFileInput" accept="application/json,.json" style="display:none" />
-          <button id="downloadNamesBtn" class="btn" type="button">Download updated names.json</button>
-        </div>
-      </section>
+      
 
       <section class="content">
-        <aside class="containers" id="containerList"></aside>
+        <aside class="containers">
+          <div class="containers-header">
+            <input type="text" id="containerSearch" placeholder="Search containers..." />
+          </div>
+          <div id="containerList"></div>
+        </aside>
         <section class="tables" id="tables">
           <div class="table-toolbar">
             <div class="container-meta" id="containerMeta"></div>
@@ -86,6 +98,6 @@
       <div class="small">Drop multiple JSON files to merge across containers.</div>
     </footer>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=20251018-3"></script>
   </body>
   </html>

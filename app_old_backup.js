@@ -1,21 +1,20 @@
-// Reverting to last working implementation
 (function(){
-  const compareToggle = document.getElementById('compareToggle');
-  const uploaderSingle = document.getElementById('uploaderSingle');
-  const uploaderCompare = document.getElementById('uploaderCompare');
-  const highlightWrap = document.getElementById('highlightWrap');
+  const compareToggle        = document.getElementById('compareToggle');
+  const uploaderSingle       = document.getElementById('uploaderSingle');
+  const uploaderCompare      = document.getElementById('uploaderCompare');
+  const highlightWrap        = document.getElementById('highlightWrap');
   const highlightDiffsToggle = document.getElementById('highlightDiffsToggle');
-  const containerList = document.getElementById('containerList');
-  const containerSearch = document.getElementById('containerSearch');
-  const tablesWrapper = document.getElementById('tablesWrapper');
-  const containerMeta = document.getElementById('containerMeta');
-  const searchInput = document.getElementById('searchInput');
-  const vanillaBtnSingle = document.getElementById('vanillaBtnSingle');
-  const vanillaBtnA = document.getElementById('vanillaBtnA');
-  const vanillaBtnB = document.getElementById('vanillaBtnB');
+  const containerList        = document.getElementById('containerList');
+  const containerSearch      = document.getElementById('containerSearch');
+  const tablesWrapper        = document.getElementById('tablesWrapper');
+  const containerMeta        = document.getElementById('containerMeta');
+  const searchInput          = document.getElementById('searchInput');
+  const vanillaBtnSingle     = document.getElementById('vanillaBtnSingle');
+  const vanillaBtnA          = document.getElementById('vanillaBtnA');
+  const vanillaBtnB          = document.getElementById('vanillaBtnB');
 
   const state = {
-    sets: { A: createEmptySet(), B: createEmptySet() },
+    sets: { A: makeSet(), B: makeSet() },
     activeSet: 'A',
     compare: false,
     highlightDiffs: true,
@@ -24,26 +23,26 @@
     names: { items: {}, containers: {} }
   };
 
-  function createEmptySet(){
-    return { containers: new Map(), containerOrder: [], files: [] };
+  function makeSet(){
+    return { files: [], containers: new Map(), containerOrder: [] };
   }
 
   fetch('assets/names.json')
     .then(r => r.ok ? r.json() : { items:{}, containers:{} })
-    .catch(() => ({items:{}, containers:{}}))
+    .catch(() => ({ items:{}, containers:{} }))
     .then(n => { state.names = { items: n.items || {}, containers: n.containers || {} }; });
 
   for (const dz of document.querySelectorAll('.dropzone')){
-    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
-    dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
-    dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); const target = dz.getAttribute('data-target'); handleFiles(e.dataTransfer.files, target); });
-    dz.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') dz.querySelector('input[type=file]').click(); });
+    dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', function(){ dz.classList.remove('drag'); });
+    dz.addEventListener('drop', function(e){ e.preventDefault(); dz.classList.remove('drag'); const target = dz.getAttribute('data-target'); handleFiles(e.dataTransfer.files, target); });
+    dz.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') dz.querySelector('input[type=file]').click(); });
   }
-  document.getElementById('fileInputA').addEventListener('change', e => handleFiles(e.target.files, 'A'));
-  const fiA = document.getElementById('fileInputA_compare'); if (fiA) fiA.addEventListener('change', e => handleFiles(e.target.files, 'A'));
-  const fiB = document.getElementById('fileInputB_compare'); if (fiB) fiB.addEventListener('change', e => handleFiles(e.target.files, 'B'));
+  document.getElementById('fileInputA').addEventListener('change', function(e){ handleFiles(e.target.files, 'A'); });
+  const fiA = document.getElementById('fileInputA_compare'); if (fiA) fiA.addEventListener('change', function(e){ handleFiles(e.target.files, 'A'); });
+  const fiB = document.getElementById('fileInputB_compare'); if (fiB) fiB.addEventListener('change', function(e){ handleFiles(e.target.files, 'B'); });
 
-  compareToggle.addEventListener('change', () => {
+  compareToggle.addEventListener('change', function(){
     state.compare = compareToggle.checked;
     uploaderSingle.hidden = state.compare;
     uploaderCompare.hidden = !state.compare;
@@ -53,13 +52,15 @@
 
   if (highlightDiffsToggle){
     state.highlightDiffs = !!highlightDiffsToggle.checked;
-    highlightDiffsToggle.addEventListener('change', () => { state.highlightDiffs = !!highlightDiffsToggle.checked; renderTables(); });
+    highlightDiffsToggle.addEventListener('change', function(){ state.highlightDiffs = !!highlightDiffsToggle.checked; renderTables(); });
   }
 
-  if (vanillaBtnSingle) vanillaBtnSingle.addEventListener('click', () => loadVanilla('A'));
-  if (vanillaBtnA) vanillaBtnA.addEventListener('click', () => loadVanilla('A'));
-  if (vanillaBtnB) vanillaBtnB.addEventListener('click', () => loadVanilla('B'));
-
+  
+  if (vanillaBtnSingle) vanillaBtnSingle.addEventListener('click', function(){ loadVanilla('A'); });
+  if (vanillaBtnA)      vanillaBtnA.addEventListener('click',      function(){ loadVanilla('A'); });
+  if (vanillaBtnB)      vanillaBtnB.addEventListener('click',      function(){ loadVanilla('B'); });
+  
+  // initial UI state
   uploaderSingle.hidden = state.compare;
   uploaderCompare.hidden = !state.compare;
   if (highlightWrap) highlightWrap.hidden = !state.compare;
@@ -67,10 +68,10 @@
   function handleFiles(fileList, target){
     const files = Array.from(fileList || []);
     if (!files.length) return;
-    Promise.all(files.map(readJsonFileSafe)).then(jsons => {
-      for (const data of jsons){ if (!data) continue; mergeDataIntoSet(state.sets[target], data); }
+    Promise.all(files.map(readJsonFileSafe)).then(function(results){
+      results.forEach(function(res){ if (!res) return; addFileToSet(state.sets[target], res.name, res.data); });
       const set = state.sets[target];
-      if (!state.activeContainer){ state.activeContainer = set.containerOrder[0] || null; }
+      if (!state.activeContainer) state.activeContainer = set.containerOrder[0] || null;
       renderFileLists();
       render();
     });
@@ -228,13 +229,15 @@
 
   function normalizeItem(short){
     if (!short) return short;
-    const itemsMap = (state.names && state.names.items) ? state.names.items : {};
-    return itemsMap[short] || short;
+    const name = state.names.items[short];
+    if (!name) state.unknown.items.add(short);
+    return name || short;
   }
   function normalizeContainer(short){
     if (!short) return short;
-    const contMap = (state.names && state.names.containers) ? state.names.containers : {};
-    return contMap[short] || short;
+    const name = state.names.containers[short];
+    if (!name) state.unknown.containers.add(short);
+    return name || short;
   }
   function ensureItemKnown(short){
     if (!state.names.items[short]) state.unknown.items.add(short);
@@ -484,6 +487,7 @@
 
 }
 })();
+
 
 
 

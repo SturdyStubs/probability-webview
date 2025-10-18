@@ -3,6 +3,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+[hidden]{display:none !important}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#151a22 0%, #12161e 100%);position:sticky;top:0;z-index:5;box-shadow:0 1px 0 rgba(0,0,0,.25)}
 .topbar h1{font-size:18px;margin:0}
 .actions{display:flex;gap:14px}
@@ -15,12 +16,20 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 .dropzone.drag{border-color:var(--accent)}
 .dz-instructions{color:var(--muted)}
 .dropzone input[type=file]{margin-top:8px}
-.names-panel{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px}
-.names-status{display:flex;gap:18px;color:var(--muted);font-size:14px}
+.uploader-actions{margin-top:10px}
+.uploader-actions .btn{padding:6px 10px;font-size:14px}
+.filelist-wrap{margin-top:10px}
+.filelist-title{margin:8px 0 6px 0;font-size:13px;color:var(--muted);font-weight:600}
+.filelist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.filelist li{display:flex;align-items:center;justify-content:space-between;background:#11151d;border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--muted);font-size:13px}
+.filelist .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filelist .remove{cursor:pointer;color:#c36;font-weight:700}
 .btn{background:var(--accent);color:#001018;border:0;border-radius:6px;padding:8px 12px;font-weight:600;cursor:pointer}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .content{display:grid;grid-template-columns:240px 1fr;gap:16px}
 .containers{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;max-height:70vh;overflow:auto}
+.containers-header{position:sticky;top:0;background:var(--panel);padding-bottom:6px}
+.containers-header input{width:100%;background:#0f131a;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 10px}
 .container-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;background:#141821;border:1px solid var(--border);color:var(--text);border-radius:8px;cursor:pointer;text-align:left;transition:border-color .15s, background .15s}
 .container-btn.active{outline:2px solid var(--accent);background:#101522}
 .container-btn:hover{border-color:#2e3544;background:#151a22}

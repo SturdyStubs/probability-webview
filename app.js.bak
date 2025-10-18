@@ -1,18 +1,16 @@
-// Reverting to last working implementation
+// Rust Loot Probabilities Viewer
 (function(){
   const compareToggle = document.getElementById('compareToggle');
+  
   const uploaderSingle = document.getElementById('uploaderSingle');
   const uploaderCompare = document.getElementById('uploaderCompare');
   const highlightWrap = document.getElementById('highlightWrap');
   const highlightDiffsToggle = document.getElementById('highlightDiffsToggle');
   const containerList = document.getElementById('containerList');
-  const containerSearch = document.getElementById('containerSearch');
   const tablesWrapper = document.getElementById('tablesWrapper');
   const containerMeta = document.getElementById('containerMeta');
   const searchInput = document.getElementById('searchInput');
-  const vanillaBtnSingle = document.getElementById('vanillaBtnSingle');
-  const vanillaBtnA = document.getElementById('vanillaBtnA');
-  const vanillaBtnB = document.getElementById('vanillaBtnB');
+  
 
   const state = {
     sets: { A: createEmptySet(), B: createEmptySet() },
@@ -20,8 +18,8 @@
     compare: false,
     highlightDiffs: true,
     activeContainer: null,
-    containerFilter: '',
-    names: { items: {}, containers: {} }
+    names: { items: {}, containers: {} },
+    unknown: { items: new Set(), containers: new Set() }
   };
 
   function createEmptySet(){
@@ -56,10 +54,10 @@
     highlightDiffsToggle.addEventListener('change', () => { state.highlightDiffs = !!highlightDiffsToggle.checked; renderTables(); });
   }
 
-  if (vanillaBtnSingle) vanillaBtnSingle.addEventListener('click', () => loadVanilla('A'));
-  if (vanillaBtnA) vanillaBtnA.addEventListener('click', () => loadVanilla('A'));
-  if (vanillaBtnB) vanillaBtnB.addEventListener('click', () => loadVanilla('B'));
-
+  
+  searchInput.addEventListener('input', () => renderTables());
+  
+  // initial UI state
   uploaderSingle.hidden = state.compare;
   uploaderCompare.hidden = !state.compare;
   if (highlightWrap) highlightWrap.hidden = !state.compare;
@@ -67,80 +65,38 @@
   function handleFiles(fileList, target){
     const files = Array.from(fileList || []);
     if (!files.length) return;
-    Promise.all(files.map(readJsonFileSafe)).then(jsons => {
-      for (const data of jsons){ if (!data) continue; mergeDataIntoSet(state.sets[target], data); }
+    Promise.all(files.map(readJsonFileSafe)).then(results => {
+      for (const res of results){ if (!res) continue; addFileToSet(state.sets[target], res.name, res.data); }
       const set = state.sets[target];
-      if (!state.activeContainer){ state.activeContainer = set.containerOrder[0] || null; }
+      if (!state.activeContainer) state.activeContainer = set.containerOrder[0] || null;
       renderFileLists();
       render();
     });
   }
 
   async function readJsonFileSafe(file){
-    try {
-      const text = await file.text();
-      return { name: file.name, data: JSON.parse(text) };
-    } catch (e) {
-      return null;
-    }
+    try { const text = await file.text(); return { name: file.name, data: JSON.parse(text) }; } catch { return null; }
   }
 
-  async function fetchJson(url){
-    const bust = `t=${Date.now()}`;
-    const u = url.includes('?') ? `${url}&${bust}` : `${url}?${bust}`;
-    const res = await fetch(u, { cache: 'no-store' });
-    if (!res.ok) throw new Error('Failed to fetch ' + url);
-    return res.json();
+  function addFileToSet(set, name, data){
+    set.files.push({ name, data });
+    mergeDataIntoSet(set, data);
   }
-
-  async function loadVanilla(target){
-    try {
-      const base = 'assets/vanilla-tables/';
-      const groups = [
-        ['default_loottable_aggregated_probability.json','default_loottable_probability.json'],
-        ['default_bradley_loottable_aggregated_probability.json','default_bradley_loottable_probability.json'],
-        ['default_heli_loottable_aggregated_probability.json','default_heli_loottable_probability.json']
-      ];
-      const set = state.sets[target];
-      set.files = [];
-      set.containers = new Map();
-      set.containerOrder = [];
-      for (const group of groups) {
-        let ok = false;
-        for (const name of group) {
-          try {
-            const data = await fetchJson(base + name);
-            addFileToSet(set, name, data);
-            ok = true;
-            break;
-          } catch(_) {}
-        }
-        if (!ok) { /* no-op */ }
-      }
-      if (!state.activeContainer){ const order = set.containerOrder; state.activeContainer = order[0] || null; }
-      renderFileLists();
-      render();
-    } catch (e) { console.warn('Failed loading vanilla tables', e); }
-
-    function addFileToSet(set, name, data){
-      set.files.push({ name, data });
-      mergeDataIntoSet(set, data);
-    }
 
   function rebuildSet(set){
-    const files = set.files.slice();
+    const files = [...set.files];
     set.containers = new Map();
     set.containerOrder = [];
-    files.forEach(function(f){ mergeDataIntoSet(set, f.data); });
+    for (const f of files){ mergeDataIntoSet(set, f.data); }
   }
 
   function removeFileFromSet(target, name){
     const set = state.sets[target];
     set.files = set.files.filter(f => f.name !== name);
     rebuildSet(set);
-      if (!set.containerOrder.includes(state.activeContainer)){
-        state.activeContainer = set.containerOrder[0] || null;
-      }
+    if (!set.containerOrder.includes(state.activeContainer)){
+      state.activeContainer = set.containerOrder[0] || null;
+    }
     renderFileLists();
     render();
   }
@@ -151,7 +107,7 @@
     const listB2 = document.getElementById('filesListB_compare');
     if (listA){
       listA.innerHTML = '';
-      state.sets.A.files.forEach(function(f){
+      state.sets.A.files.forEach(f => {
         const li = document.createElement('li');
         const span = document.createElement('span'); span.className = 'name'; span.textContent = f.name;
         const rm = document.createElement('span'); rm.className = 'remove'; rm.textContent = '×'; rm.title = 'Remove';
@@ -161,7 +117,7 @@
     }
     if (listA2){
       listA2.innerHTML = '';
-      state.sets.A.files.forEach(function(f){
+      state.sets.A.files.forEach(f => {
         const li = document.createElement('li');
         const span = document.createElement('span'); span.className = 'name'; span.textContent = f.name;
         const rm = document.createElement('span'); rm.className = 'remove'; rm.textContent = '×'; rm.title = 'Remove';
@@ -171,7 +127,7 @@
     }
     if (listB2){
       listB2.innerHTML = '';
-      state.sets.B.files.forEach(function(f){
+      state.sets.B.files.forEach(f => {
         const li = document.createElement('li');
         const span = document.createElement('span'); span.className = 'name'; span.textContent = f.name;
         const rm = document.createElement('span'); rm.className = 'remove'; rm.textContent = '×'; rm.title = 'Remove';
@@ -209,7 +165,7 @@
             conditions: amounts.Condition || null
           };
           bucket.combos.push(combo);
-          
+          items.forEach(short => ensureItemKnown(short));
         } else {
           const agg = {
             shortname: key,
@@ -220,7 +176,7 @@
             maxCondition: amounts.MaxCondition ?? (amounts.Condition?.MaxCondition ?? null)
           };
           bucket.aggregated.push(agg);
-          
+          ensureItemKnown(key);
         }
       }
     }
@@ -228,13 +184,15 @@
 
   function normalizeItem(short){
     if (!short) return short;
-    const itemsMap = (state.names && state.names.items) ? state.names.items : {};
-    return itemsMap[short] || short;
+    const name = state.names.items[short];
+    if (!name) state.unknown.items.add(short);
+    return name || short;
   }
   function normalizeContainer(short){
     if (!short) return short;
-    const contMap = (state.names && state.names.containers) ? state.names.containers : {};
-    return contMap[short] || short;
+    const name = state.names.containers[short];
+    if (!name) state.unknown.containers.add(short);
+    return name || short;
   }
   function ensureItemKnown(short){
     if (!state.names.items[short]) state.unknown.items.add(short);
@@ -245,8 +203,6 @@
     renderTables();
   }
 
-  // Hook container search after functions are defined
-  if (containerSearch){ containerSearch.addEventListener("input", () => { state.containerFilter = (containerSearch.value||"").toLowerCase(); renderContainers(); renderTables(); }); }
   function renderContainers(){
     const targetSet = state.compare ? state.sets.A : state.sets[state.activeSet];
     const containers = new Set();
@@ -255,28 +211,21 @@
       state.sets.B.containerOrder.forEach(c => containers.add(c));
     } else {
       targetSet.containerOrder.forEach(c => containers.add(c));
-      }
-    let list = Array.from(containers);
-    const ft = (state.containerFilter || '').toLowerCase();
-    if (ft){
-      list = list.filter(c => {
-        const bucket = state.sets.A.containers.get(c) || state.sets.B.containers.get(c) || targetSet.containers.get(c);
-        const short = bucket?.shortname || '';
-        return c.toLowerCase().includes(ft) || short.toLowerCase().includes(ft);
-      });
     }
+    const list = Array.from(containers);
     if (list.length && !state.activeContainer) state.activeContainer = list[0];
     containerList.innerHTML = '';
     list.forEach(c => {
       const btn = document.createElement('button');
       btn.className = 'container-btn' + (c === state.activeContainer ? ' active' : '');
+      const img = document.createElement('img'); img.alt = ''; img.src = `assets/containers/${c}.png`; img.onerror = () => { img.style.display = 'none'; };
       const labels = document.createElement('span'); labels.className = 'container-labels';
       const title = document.createElement('span'); title.textContent = c;
       const sub = document.createElement('span'); sub.className = 'sub';
       const bucket = (state.sets.A.containers.get(c) || state.sets.B.containers.get(c) || targetSet.containers.get(c));
       sub.textContent = bucket?.shortname || c;
       labels.appendChild(title); labels.appendChild(sub);
-      btn.appendChild(labels);
+      btn.appendChild(img); btn.appendChild(labels);
       btn.addEventListener('click', () => { state.activeContainer = c; renderTables(); document.querySelectorAll('.container-btn').forEach(b => b.classList.toggle('active', b === btn)); });
       containerList.appendChild(btn);
     });
@@ -301,12 +250,13 @@
     const cName = state.activeContainer;
     if (!cName){ tablesWrapper.innerHTML = '<div class="small muted">Upload files to view tables.</div>'; return; }
 
+    const img = document.createElement('img'); img.alt = ''; img.src = `assets/containers/${cName}.png`; img.onerror = () => { img.style.display = 'none'; };
     const labels = document.createElement('div'); labels.className = 'labels';
     const h = document.createElement('h3'); h.textContent = cName;
     const sub = document.createElement('div'); sub.className = 'sub';
     const bucketH = state.sets.A.containers.get(cName) || state.sets.B.containers.get(cName) || (state.sets[state.activeSet].containers.get(cName));
     sub.textContent = bucketH?.shortname || cName;
-    labels.appendChild(h); labels.appendChild(sub); containerMeta.appendChild(labels);
+    labels.appendChild(h); labels.appendChild(sub); containerMeta.appendChild(img); containerMeta.appendChild(labels);
 
     const filterText = (searchInput.value || '').toLowerCase();
     
@@ -315,7 +265,7 @@
       const set = state.sets[state.activeSet];
       const bucket = set.containers.get(cName);
       if (!bucket){ tablesWrapper.textContent = 'No data for this container.'; return; }
-      const { table } = buildTableForBucket(bucket, (bucket.combos.length === 0), filterText);
+      const { table } = buildTableForBucket(, (bucket.combos.length === 0), filterText);
       tablesWrapper.appendChild(table);
     } else {
       const left = state.sets.A.containers.get(cName) || { aggregated: [], combos: [] };
@@ -336,9 +286,6 @@
       grid.appendChild(aWrap); grid.appendChild(bWrap); tablesWrapper.appendChild(grid);
     }
   }
-
-  // Attach table search listener after renderTables is defined
-  if (searchInput){ searchInput.addEventListener("input", () => renderTables()); }
 
   function extractRowStats(bucket, aggregated){
     const rows = new Map();
@@ -403,30 +350,26 @@
         chance: c.chance,
         amounts: formatComboAmounts(c.amounts)
       }));
-      }
-
-    if (filterText){
-      const ft = filterText.toLowerCase();
-      rows = rows.filter(r => {
-        const shortText = Array.isArray(r.short) ? r.short.join(' ') : (r.short || '');
-        return r.name.toLowerCase().includes(ft) || shortText.toLowerCase().includes(ft);
-      });
     }
+
+    if (filterText){ const ft = filterText.toLowerCase(); rows = rows.filter(r => r.name.toLowerCase().includes(ft)); }
     rows.sort((a,b)=> b.chance - a.chance);
 
     for (const r of rows){
       const tr = document.createElement('tr');
       const tdName = document.createElement('td');
       const nameCell = document.createElement('div'); nameCell.className = 'item-cell';
+      const icons = document.createElement('div'); icons.className = 'item-icons';
+      for (const short of r.icons){ const img = document.createElement('img'); img.alt = short; img.src = `assets/items/${short}.png`; img.onerror = () => { img.style.display = 'none'; }; icons.appendChild(img); }
       const labels = document.createElement('div'); labels.className = 'item-labels';
       const title = document.createElement('span'); title.textContent = r.name;
       const sub = document.createElement('span'); sub.className = 'sub'; sub.textContent = Array.isArray(r.short) ? r.short.join(' + ') : r.short;
       labels.appendChild(title); labels.appendChild(sub);
-      nameCell.appendChild(labels); tdName.appendChild(nameCell);
+      nameCell.appendChild(icons); nameCell.appendChild(labels); tdName.appendChild(nameCell);
 
-      const tdCond = document.createElement('td'); tdCond.innerHTML = r.condition || '<span class="muted">-</span>';
+      const tdCond = document.createElement('td'); tdCond.innerHTML = r.condition || '<span class="muted">—</span>';
       const tdChance = document.createElement('td'); tdChance.textContent = fmtNum(r.chance);
-      const tdAmt = document.createElement('td'); tdAmt.innerHTML = r.amounts || '<span class="muted">-</span>';
+      const tdAmt = document.createElement('td'); tdAmt.innerHTML = r.amounts || '<span class="muted">—</span>';
       tr.appendChild(tdName); tr.appendChild(tdCond); tr.appendChild(tdChance); tr.appendChild(tdAmt);
       tbody.appendChild(tr);
     }
@@ -440,13 +383,13 @@
     return { table, tbody };
   }
 
-    function formatCond(min, max){
+  function formatCond(min, max){
     const hasMin = min !== null && min !== undefined;
     const hasMax = max !== null && max !== undefined;
     if (!hasMin && !hasMax) return '';
-    const m1 = hasMin ? fmtNum(min) : '-';
-    const m2 = hasMax ? fmtNum(max) : '-';
-    return `${m1} - ${m2}`;
+    const m1 = hasMin ? fmtNum(min) : '—';
+    const m2 = hasMax ? fmtNum(max) : '—';
+    return `${m1} — ${m2}`;
   }
 
   function formatComboCondition(cond){
@@ -466,30 +409,26 @@
     const parts = [];
     for (const s of items){
       const a = min[s], b = max[s]; if (a == null && b == null) continue;
-      const m1 = a == null ? '-' : fmtNum(a); const m2 = b == null ? '-' : fmtNum(b);
-      parts.push(`${normalizeItem(s)}: ${m1} - ${m2}`);
+      const m1 = a == null ? '—' : fmtNum(a); const m2 = b == null ? '—' : fmtNum(b);
+      parts.push(`${normalizeItem(s)}: ${m1} — ${m2}`);
     }
     return parts.join('<br/>');
   }
 
   function formatAmountRange(min, max){
     if (min == null && max == null) return '';
-    if (min == null) return `<= ${fmtNum(max)}`;
-    if (max == null) return `>= ${fmtNum(min)}`;
-    return `${fmtNum(min)} - ${fmtNum(max)}`;
+    if (min == null) return `≤ ${fmtNum(max)}`;
+    if (max == null) return `≥ ${fmtNum(min)}`;
+    return `${fmtNum(min)} — ${fmtNum(max)}`;
   }
 
   function fmtNum(n){ return (typeof n === 'number' && !Number.isNaN(n)) ? (Math.round(n*1000)/1000).toString() : '0'; }
 
-
-}
+      render();
+    }catch(err){ alert('Failed to load names.json: ' + err); }
+    finally{ e.target.value = ''; }
+  }
 })();
-
-
-
-
-
-
 
 
 

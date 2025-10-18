@@ -1,0 +1,288 @@
+{
+    "heli_crate": {
+        "Probabilities": {
+            "ammo.rifle": 30.5,
+            "ammo.rifle.incendiary": 15.0,
+            "ammo.rifle.explosive": 15.0,
+            "ammo.rifle.hv": 15.0,
+            "ammo.rocket.fire": 15.0,
+            "ammo.rocket.hv": 15.0,
+            "ammo.rocket.mlrs": 15.0,
+            "ammo.rocket.seeker": 15.0,
+            "explosive.timed": 26.0,
+            "ammo.rocket.basic": 25.0,
+            "rifle.ak": 2.5,
+            "smg.thompson": 1.5,
+            "ammo.pistol": 7.5,
+            "rifle.bolt": 2.5,
+            "smg.2": 1.5,
+            "rifle.lr300": 1.0,
+            "smg.mp5": 2.5,
+            "pistol.m92": 1.5,
+            "shotgun.spas12": 0.5,
+            "ammo.shotgun": 1.5,
+            "rifle.l96": 0.5,
+            "weapon.mod.8x.scope": 0.5,
+            "rifle.m39": 1.0,
+            "pistol.prototype17": 1.5,
+            "shotgun.m4": 1.0,
+            "ammo.shotgun.slug": 1.0,
+            "lmg.m249": 10.0,
+            "weapon.mod.lasersight": 8.5,
+            "weapon.mod.small.scope": 8.5,
+            "weapon.mod.burstmodule": 7.5,
+            "weapon.mod.extendedmags": 7.5,
+            "door.double.hinged.toptier": 1.0,
+            "door.hinged.toptier": 1.0,
+            "wall.window.bars.toptier": 1.0,
+            "metal.facemask": 1.0,
+            "metal.plate.torso": 1.0,
+            "explosives": 1.0,
+            "hmlmg": 1.0,
+            "rifle.sks": 1.0,
+            "weapon.mod.silencer": 1.0
+        },
+        "Amounts": {
+            "ammo.rifle": {
+                "Min": 8.0,
+                "Max": 120.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.rifle.incendiary": {
+                "Min": 60.0,
+                "Max": 60.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.rifle.explosive": {
+                "Min": 30.0,
+                "Max": 30.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.rifle.hv": {
+                "Min": 40.0,
+                "Max": 40.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.rocket.fire": {
+                "Min": 5.0,
+                "Max": 5.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.rocket.hv": {
+                "Min": 3.0,
+                "Max": 3.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.rocket.mlrs": {
+                "Min": 2.0,
+                "Max": 2.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.rocket.seeker": {
+                "Min": 4.0,
+                "Max": 4.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "explosive.timed": {
+                "Min": 1.0,
+                "Max": 2.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.rocket.basic": {
+                "Min": 3.0,
+                "Max": 3.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "rifle.ak": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "smg.thompson": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.pistol": {
+                "Min": 15.0,
+                "Max": 48.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "rifle.bolt": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "smg.2": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "rifle.lr300": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "smg.mp5": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "pistol.m92": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "shotgun.spas12": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.shotgun": {
+                "Min": 8.0,
+                "Max": 12.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "rifle.l96": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "weapon.mod.8x.scope": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "rifle.m39": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "pistol.prototype17": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "shotgun.m4": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "ammo.shotgun.slug": {
+                "Min": 8.0,
+                "Max": 12.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "lmg.m249": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "weapon.mod.lasersight": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "weapon.mod.small.scope": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "weapon.mod.burstmodule": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "weapon.mod.extendedmags": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "door.double.hinged.toptier": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "door.hinged.toptier": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "wall.window.bars.toptier": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "metal.facemask": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "metal.plate.torso": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "explosives": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "hmlmg": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "rifle.sks": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            },
+            "weapon.mod.silencer": {
+                "Min": 1.0,
+                "Max": 1.0,
+                "MinCondition": null,
+                "MaxCondition": null
+            }
+        }
+    }
+}
