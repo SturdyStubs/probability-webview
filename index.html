@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rust Loot Probabilities Viewer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Rust Loot Probabilities</h1>
+      <div class="actions">
+        <label class="toggle">
+          <input type="checkbox" id="compareToggle" />
+          <span>Compare Sets</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="viewAggregatedToggle" checked />
+          <span>Aggregated View</span>
+        </label>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="uploader" id="uploaderSingle">
+        <h2>Upload Probability Files</h2>
+        <p>Drop your <code>*probability.json</code> and <code>*aggregated_probability.json</code> here, or use file picker.</p>
+        <div class="dropzone" data-target="A" tabindex="0">
+          <div class="dz-instructions">Drop files here (Set A)</div>
+          <input type="file" id="fileInputA" multiple accept=".json" />
+        </div>
+      </section>
+
+      <section class="uploader two" id="uploaderCompare" hidden>
+        <div class="uploader-col">
+          <h2>Upload Set A</h2>
+          <div class="dropzone" data-target="A" tabindex="0">
+            <div class="dz-instructions">Drop files here (Set A)</div>
+            <input type="file" id="fileInputA_compare" multiple accept=".json" />
+          </div>
+        </div>
+        <div class="uploader-col">
+          <h2>Upload Set B</h2>
+          <div class="dropzone" data-target="B" tabindex="0">
+            <div class="dz-instructions">Drop files here (Set B)</div>
+            <input type="file" id="fileInputB_compare" multiple accept=".json" />
+          </div>
+        </div>
+      </section>
+
+      <section class="names-panel">
+        <div class="names-status">
+          <div><strong>Loaded names:</strong> <span id="namesLoaded">0</span> items, <span id="containersLoaded">0</span> containers</div>
+          <div><strong>Unknown names queued:</strong> <span id="unknownItems">0</span> items, <span id="unknownContainers">0</span> containers</div>
+        </div>
+        <div class="names-actions">
+          <button id="downloadNamesBtn" class="btn" type="button">Download updated names.json</button>
+        </div>
+      </section>
+
+      <section class="content">
+        <aside class="containers" id="containerList"></aside>
+        <section class="tables" id="tables">
+          <div class="table-toolbar">
+            <div class="container-meta" id="containerMeta"></div>
+            <div class="filters">
+              <input type="text" id="searchInput" placeholder="Filter items..." />
+            </div>
+          </div>
+
+          <div class="tables-wrapper" id="tablesWrapper"></div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div>
+        No data is stored. Everything runs in your browser.
+      </div>
+      <div class="small">Drop multiple JSON files to merge across containers.</div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+  </html>
