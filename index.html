@@ -14,6 +14,10 @@
           <input type="checkbox" id="compareToggle" />
           <span>Compare Sets</span>
         </label>
+        <label class="toggle" id="highlightWrap" hidden>
+          <input type="checkbox" id="highlightDiffsToggle" checked />
+          <span>Highlight Differences</span>
+        </label>
         <label class="toggle">
           <input type="checkbox" id="viewAggregatedToggle" checked />
           <span>Aggregated View</span>
@@ -54,6 +58,8 @@
           <div><strong>Unknown names queued:</strong> <span id="unknownItems">0</span> items, <span id="unknownContainers">0</span> containers</div>
         </div>
         <div class="names-actions">
+          <label class="btn" for="namesFileInput">Load names.json</label>
+          <input type="file" id="namesFileInput" accept="application/json,.json" style="display:none" />
           <button id="downloadNamesBtn" class="btn" type="button">Download updated names.json</button>
         </div>
       </section>
