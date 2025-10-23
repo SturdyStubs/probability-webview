@@ -68,8 +68,14 @@
     const files = Array.from(fileList || []);
     if (!files.length) return;
     Promise.all(files.map(readJsonFileSafe)).then(jsons => {
-      for (const data of jsons){ if (!data) continue; mergeDataIntoSet(state.sets[target], data); }
       const set = state.sets[target];
+      for (const fileObj of jsons){
+        if (!fileObj || !fileObj.data) continue;
+        // Track file for listing/removal and rebuild support
+        set.files.push({ name: fileObj.name, data: fileObj.data });
+        // Merge the actual JSON payload into the set
+        mergeDataIntoSet(set, fileObj.data);
+      }
       if (!state.activeContainer){ state.activeContainer = set.containerOrder[0] || null; }
       renderFileLists();
       render();
