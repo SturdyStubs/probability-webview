@@ -132,6 +132,8 @@
       set.files.push({ name, data });
       mergeDataIntoSet(set, data);
     }
+    // Close loadVanilla scope before declaring other top-level helpers
+  }
 
   function rebuildSet(set){
     const files = set.files.slice();
