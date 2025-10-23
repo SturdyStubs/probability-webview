@@ -344,6 +344,8 @@
       const bData = extractRowStats(right, useAggregated);
       decorateDiffs(aTbl, aData, bData); decorateDiffs(bTbl, bData, aData);
       decoratePresence(aTbl, aData, bData); decoratePresence(bTbl, bData, aData);
+      appendDiffSummary(aWrap, aData, bData);
+      appendDiffSummary(bWrap, bData, aData);
 
       grid.appendChild(aWrap); grid.appendChild(bWrap); tablesWrapper.appendChild(grid);
     }
@@ -387,6 +389,26 @@
       const inSelf = selfMap.has(name); const inOther = otherMap.has(name);
       if (state.highlightDiffs){ if (inSelf && !inOther) tr.classList.add('diff-only-a'); if (!inSelf && inOther) tr.classList.add('diff-only-b'); }
     }
+  }
+
+  function appendDiffSummary(parentEl, selfMap, otherMap){
+    if (!state.highlightDiffs) return;
+    const plus = [];
+    const minus = [];
+    for (const name of selfMap.keys()){
+      if (!otherMap.has(name)) plus.push(name);
+    }
+    for (const name of otherMap.keys()){
+      if (!selfMap.has(name)) minus.push(name);
+    }
+    if (plus.length === 0 && minus.length === 0) return;
+    const box = document.createElement('div'); box.className = 'diff-summary';
+    const label = document.createElement('div'); label.className = 'small muted'; label.textContent = 'Differences'; box.appendChild(label);
+    const chips = document.createElement('div'); chips.className = 'diff-chips';
+    plus.sort().forEach(n => { const s = document.createElement('span'); s.className = 'diff-chip plus'; s.textContent = '+ ' + n; chips.appendChild(s); });
+    minus.sort().forEach(n => { const s = document.createElement('span'); s.className = 'diff-chip minus'; s.textContent = '- ' + n; chips.appendChild(s); });
+    box.appendChild(chips);
+    parentEl.appendChild(box);
   }
 
   function buildTableForBucket(bucket, aggregated, filterText){
