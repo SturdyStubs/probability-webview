@@ -494,7 +494,6 @@
   function fmtNum(n){ return (typeof n === 'number' && !Number.isNaN(n)) ? (Math.round(n*1000)/1000).toString() : '0'; }
 
 
-}
 })();
 
 
