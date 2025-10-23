@@ -43,13 +43,19 @@
   const fiA = document.getElementById('fileInputA_compare'); if (fiA) fiA.addEventListener('change', e => handleFiles(e.target.files, 'A'));
   const fiB = document.getElementById('fileInputB_compare'); if (fiB) fiB.addEventListener('change', e => handleFiles(e.target.files, 'B'));
 
-  compareToggle.addEventListener('change', () => {
-    state.compare = compareToggle.checked;
-    uploaderSingle.hidden = state.compare;
-    uploaderCompare.hidden = !state.compare;
+  function updateViewModeUI(){
+    if (uploaderSingle) uploaderSingle.hidden = !!state.compare;
+    if (uploaderCompare) uploaderCompare.hidden = !state.compare;
     if (highlightWrap) highlightWrap.hidden = !state.compare;
-    render();
-  });
+  }
+
+  if (compareToggle){
+    compareToggle.addEventListener('change', () => {
+      state.compare = !!compareToggle.checked;
+      updateViewModeUI();
+      if (typeof render === 'function') render();
+    });
+  }
 
   if (highlightDiffsToggle){
     state.highlightDiffs = !!highlightDiffsToggle.checked;
@@ -60,9 +66,7 @@
   if (vanillaBtnA) vanillaBtnA.addEventListener('click', () => loadVanilla('A'));
   if (vanillaBtnB) vanillaBtnB.addEventListener('click', () => loadVanilla('B'));
 
-  uploaderSingle.hidden = state.compare;
-  uploaderCompare.hidden = !state.compare;
-  if (highlightWrap) highlightWrap.hidden = !state.compare;
+  updateViewModeUI();
 
   function handleFiles(fileList, target){
     const files = Array.from(fileList || []);
